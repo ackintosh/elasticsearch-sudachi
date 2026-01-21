@@ -166,11 +166,12 @@ nexusPublishing {
 
 subprojects {
     plugins.withType(JavaPlugin) {
-        java {
-            toolchain {
+        afterEvaluate {
+            java {
                 def esKind = rootProject.sudachiEs.kind.get()
                 def javaVersion = (esKind.engine.kind == 'opensearch' && esKind.version.startsWith('3.')) ? 21 : 11
-                languageVersion = JavaLanguageVersion.of(javaVersion)
+                sourceCompatibility = JavaVersion.toVersion(javaVersion)
+                targetCompatibility = JavaVersion.toVersion(javaVersion)
             }
         }
     }
