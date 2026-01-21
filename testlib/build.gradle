@@ -11,21 +11,29 @@ plugins {
 
 version = properties["pluginVersion"]
 
-// OpenSearch/Elasticsearch のバージョンから必要な Java バージョンを判定
+// `spi` と同じ判定ロジック（同一にすることが重要）
 def requiredJavaVersion = {
     var esKind = sudachiEs.kind.get()
-    // OpenSearch 3.x 以上は Java 21 が必要
     if (esKind.engine.kind == 'opensearch' && esKind.version.startsWith('3.')) {
         return JvmTarget.JVM_21
     }
     return JvmTarget.JVM_11
 }
-
-compileKotlin {
-    compilerOptions.jvmTarget.set(requiredJavaVersion())
+def requiredJavaLanguageVersion = {
+    requiredJavaVersion() == JvmTarget.JVM_21 ? JavaLanguageVersion.of(21) : JavaLanguageVersion.of(11)
 }
 
-compileTestKotlin {
+java {
+    toolchain {
+        languageVersion = requiredJavaLanguageVersion()
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.release.set(java.toolchain.languageVersion.get().asInt())
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
     compilerOptions.jvmTarget.set(requiredJavaVersion())
 }
 
