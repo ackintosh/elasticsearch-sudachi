@@ -187,14 +187,24 @@ nexusPublishing {
 }
 
 subprojects {
+    def esKind = rootProject.sudachiEs.kind.get()
+    def javaVersion = (esKind.engine.kind == 'opensearch' && esKind.version.startsWith('3.')) ? 21 : 11
+
     plugins.withType(JavaPlugin) {
-        afterEvaluate {
-            java {
-                def esKind = rootProject.sudachiEs.kind.get()
-                def javaVersion = (esKind.engine.kind == 'opensearch' && esKind.version.startsWith('3.')) ? 21 : 11
-                sourceCompatibility = JavaVersion.toVersion(javaVersion)
-                targetCompatibility = JavaVersion.toVersion(javaVersion)
+        java {
+            toolchain {
+                languageVersion = JavaLanguageVersion.of(javaVersion)
             }
+        }
+
+        tasks.withType(JavaCompile).configureEach {
+            options.release.set(javaVersion)
+        }
+    }
+
+    plugins.withId("org.jetbrains.kotlin.jvm") {
+        tasks.withType(KotlinCompile).configureEach {
+            compilerOptions.jvmTarget.set(javaVersion == 21 ? JvmTarget.JVM_21 : JvmTarget.JVM_11)
         }
     }
 }
