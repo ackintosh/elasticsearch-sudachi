@@ -31,6 +31,12 @@ def requiredJavaLanguageVersion = {
     requiredJavaVersion() == JvmTarget.JVM_21 ? JavaLanguageVersion.of(21) : JavaLanguageVersion.of(11)
 }
 
+tasks.withType(JavaCompile).configureEach {
+    // toolchain の languageVersion と同じ値に揃える（11 or 21）
+    options.release.set(java.toolchain.languageVersion.get().asInt())
+}
+
+
 java {
     toolchain {
         languageVersion = requiredJavaLanguageVersion()
