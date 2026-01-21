@@ -26,6 +26,24 @@ def requiredJavaVersion = {
     return JvmTarget.JVM_11
 }
 
+def requiredJavaLanguageVersion = {
+    requiredJavaVersion() == JvmTarget.JVM_21 ? JavaLanguageVersion.of(21) : JavaLanguageVersion.of(11)
+}
+
+java {
+    toolchain {
+        languageVersion = requiredJavaLanguageVersion()
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.release.set(java.toolchain.languageVersion.get().asInt())
+}
+
+tasks.withType(KotlinCompile).configureEach {
+    compilerOptions.jvmTarget.set(requiredJavaVersion())
+}
+
 compileKotlin {
     compilerOptions.jvmTarget.set(requiredJavaVersion())
 }
