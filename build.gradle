@@ -16,7 +16,7 @@ group = 'com.worksap.nlp'
 archivesBaseName = 'analysis-sudachi'
 version = properties["pluginVersion"]
 
-// OpenSearch/Elasticsearch のバージョンから必要な Java バージョンを判定
+// OpenSearch/Elasticsearch のバージョンから必要な Java バージョンを判定.
 def requiredJavaVersion = {
     var esKind = sudachiEs.kind.get()
     // OpenSearch 3.x 以上は Java 21 が必要
