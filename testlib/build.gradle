@@ -11,12 +11,22 @@ plugins {
 
 version = properties["pluginVersion"]
 
+// OpenSearch/Elasticsearch のバージョンから必要な Java バージョンを判定
+def requiredJavaVersion = {
+    var esKind = sudachiEs.kind.get()
+    // OpenSearch 3.x 以上は Java 21 が必要
+    if (esKind.engine.kind == 'opensearch' && esKind.version.startsWith('3.')) {
+        return JvmTarget.JVM_21
+    }
+    return JvmTarget.JVM_11
+}
+
 compileKotlin {
-    compilerOptions.jvmTarget.set(JvmTarget.JVM_11)
+    compilerOptions.jvmTarget.set(requiredJavaVersion())
 }
 
 compileTestKotlin {
-    compilerOptions.jvmTarget.set(JvmTarget.JVM_11)
+    compilerOptions.jvmTarget.set(requiredJavaVersion())
 }
 
 dependencies {
