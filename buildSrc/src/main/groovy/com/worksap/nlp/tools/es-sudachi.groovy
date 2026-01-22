@@ -113,6 +113,7 @@ class EsSudachiPlugin implements Plugin<Project> {
                 def parsedVersion = Version.fromRaw(verString)
                 if (parsedVersion.ge(3, 0)) {
                     testImplementation("org.opensearch:opensearch-agent-bootstrap:$verString")
+                    testRuntimeOnly("org.opensearch:opensearch-agent:$verString")
                 }
             }
         }
