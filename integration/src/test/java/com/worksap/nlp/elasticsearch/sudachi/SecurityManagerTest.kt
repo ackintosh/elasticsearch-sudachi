@@ -18,11 +18,17 @@ package com.worksap.nlp.elasticsearch.sudachi
 
 import kotlin.io.path.Path
 import kotlin.io.path.exists
+import org.junit.Assume
 import org.junit.Test
 
 class SecurityManagerTest : SudachiEnvTest() {
   @Test(expected = SecurityException::class)
   fun failsAsExpected() {
+    // Skip this test on OpenSearch 3.0+ which uses Java agent-based security instead of Security Manager
+    Assume.assumeTrue(
+        "Security Manager is disabled (OpenSearch 3.0+ uses agent-based security)",
+        System.getProperty("tests.security.manager", "true").toBoolean()
+    )
     Path("settings.gradle").exists()
   }
 }
