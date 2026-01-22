@@ -24,11 +24,12 @@ import org.junit.Test
 class SecurityManagerTest : SudachiEnvTest() {
   @Test(expected = SecurityException::class)
   fun failsAsExpected() {
-    // Skip this test on OpenSearch 3.0+ which uses Java agent-based security instead of Security
-    // Manager
+    // Skip this test on OpenSearch 3.0+ / Java 21+ which uses Java agent-based security
+    // instead of Security Manager. getSecurityManager() returns null when no SM is installed.
+    @Suppress("DEPRECATION")
     Assume.assumeTrue(
-        "Security Manager is disabled (OpenSearch 3.0+ uses agent-based security)",
-        System.getProperty("tests.security.manager", "true").toBoolean())
+        "Security Manager is not installed (OpenSearch 3.0+ uses agent-based security)",
+        System.getSecurityManager() != null)
     Path("settings.gradle").exists()
   }
 }
