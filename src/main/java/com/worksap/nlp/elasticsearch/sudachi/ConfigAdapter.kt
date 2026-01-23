@@ -46,8 +46,8 @@ class ConfigAdapter(anchor: PathAnchor, settings: Settings, env: Environment) {
         if (settingsPath == null) {
           readDefaultConfig(basePath, fullAnchor)
         } else {
-          val configObject: Config.Resource<Any> = fullAnchor.resource(settingsPath)
-          Config.fromResource<Any>(configObject, fullAnchor)
+          val configObject = fullAnchor.resource<Any>(settingsPath)
+          Config.fromResource(configObject, fullAnchor)
         }
     return base.allowEmptyMorpheme(allowEmptyMorpheme)
   }
